@@ -1,0 +1,54 @@
+#######################Simple Client Program:############################################
+
+Language: Python
+
+Implemented both TCP and SSL connection to cs5700.ccs.neu.edu
+Client file contains the SSL code. please run using (for SSL):
+	
+	./client -s cs5700.ccs.neu.edu 001363639
+
+Please find the TCP code below. The "client" file contains the SSL code with port "27996".
+Run using(for TCP):
+	
+	./client cs5700.ccs.neu.edu 001363639
+
+-------------------------------------------------------------------------------------------
+CODE for TCP:
+-------------------------------------------------------------------------------------------
+
+#!/usr/bin/env python
+
+import socket #import socket
+import sys	
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    #creating a socket
+port = 27995 					         #port number
+host_ip = socket.gethostbyname(sys.argv[1])	         #getting host ip
+s.connect((host_ip, port))
+hello = b'cs5700spring2019 HELLO '+str(sys.argv[2])+'\n' #HELLO message to server
+s.send(hello)
+while True:						 #loop to get the SOLUTION
+	data = s.recv(1024)
+        #print data             #prints all the equations the server sends
+        p=data.split()		#splitting data
+        if p[2] == 'BYE':
+                print p[1]	#to print secretflag
+                break
+        else:
+             	g=eval(p[2]+p[3]+p[4]) #eval to find the SOLUTION
+                h = b'cs5700spring2019 '+str(g)+'\n' #sending the SOLUTION
+                s.send(h)
+s.close()						#close the connection
+
+------------------------------------------------------------------------------------
+* The secret flags are in the secret_flags file. (Both for TCP and SSL)
+------------------------------------------------------------------------------------
+
+Problems faced:
+1. Setting up a TCP connection with the cs5700 server and creating a socket.
+2. Bad descriptor error, handshaking error, checking for the version of ssl,
+	certificates used, cipher, and context for the cs5700 server.
+3. Finding ways to efficiently  evaluate the equations sent by the server.
+
+-----------------------------------------------------------------------------------
+
