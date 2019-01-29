@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+
+import socket #import socket
+import sys	
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #creating a socket
+port = 27995 					      #port number
+host_ip = socket.gethostbyname('cs5700.ccs.neu.edu')  #getting host ip
+s.connect((host_ip, port))
+hello = b'cs5700spring2019 HELLO '+str(sys.argv[1])+'\n' #HELLO message to server
+s.send(hello)
+while True:						#loop to get the SOLUTION
+	data = s.recv(1024)
+        #print data
+        p=data.split()		#splitting data
+        if p[2] == 'BYE':
+                print p[1]	#to print secretflag
+                break
+        else:
+             	g=eval(p[2]+p[3]+p[4]) #eval to find the SOLUTION
+                h = b'cs5700spring2019 '+str(g)+'\n' #sending the SOLUTION
+                s.send(h)
+s.close()						#close the connection
+----------------------------------------------------------------------------------------------
+#!/usr/bin/env python
+
+import socket
+import sys
+import ssl
+
+sl = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+port = 27996
+host_ip = socket.gethostbyname('cs5700.ccs.neu.edu')
+wrappeds = sl.wrap_socket(s)
+wrappeds.connect((host_ip, port))
+hello = b'cs5700spring2019 HELLO '+str(sys.argv[2])+'\n'
+wrappeds.send(hello)
+while True:
+	data = wrappeds.recv(1024)
+        #print data
+        p=data.split()
+        if p[2] == 'BYE':
+                print p[1]
+                break
+        else:
+             	g=eval(p[2]+p[3]+p[4])
+                h = b'cs5700spring2019 '+str(g)+'\n'
+                wrappeds.send(h)
+wrappeds.close()
+-----------------------------------------------------------------------------------------------
+CONNECTED(00000003)
+140686966863776:error:1409E0E5:SSL routines:ssl3_write_bytes:ssl handshake failure:s3_pkt.c:659:
+---
+no peer certificate available
+---
+No client certificate CA names sent
+---
+SSL handshake has read 0 bytes and written 0 bytes
+---
+New, (NONE), Cipher is (NONE)
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : SSLv3
+    Cipher    : 0000
+    Session-ID: 
+    Session-ID-ctx: 
+    Master-Key: 
+    Key-Arg   : None
+    Krb5 Principal: None
+    PSK identity: None
+    PSK identity hint: None
+    Start Time: 1548790407
+    Timeout   : 7200 (sec)
+    Verify return code: 0 (ok)
+---------------------------------------------------------------------------------------------
+
